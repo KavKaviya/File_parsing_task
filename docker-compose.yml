@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  server:
+    build: .
+    image: django-file-parsing
+    container_name: django-api
+    command: python file_parsing/manage.py runserver 0.0.0.0:8100
+    ports:
+      - "8100:8100"
+    volumes:
+      - .:/app
+      - django-vol:/django-vol/data
+    depends_on:
+      - database
+   
+  database:
+    image: postgres
+    container_name: postgres-db
+    environment:
+      - POSTGRES_DB=postgreSQL
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin@123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-vol:/postgres-vol/data
+
+  pgAdmin:
+    image: dpage/pgadmin4
+    container_name: pgAdmin-container
+    restart: always
+    volumes:
+      - pgAdminData:/var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@email.com
+      PGADMIN_DEFAULT_PASSWORD: postgres@123
+    ports:
+      - "5050:80"
+    depends_on:
+      - database
+    
+
+volumes:
+  django-vol:
+  postgres-vol:
+  pgAdminData:
+
