@@ -1,6 +1,4 @@
-import datetime
 import mimetypes
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -10,7 +8,6 @@ import random
 import pandas
 from rest_framework import status
 from rest_framework import viewsets
-from django.urls import reverse
 
 class csvFileUploadView(APIView):
     
@@ -22,7 +19,6 @@ class csvFileUploadView(APIView):
             elif file.content_type!="text/csv":
                return Response({"Message":"Please upload a CSV file.","Status":status.HTTP_400_BAD_REQUEST})
             unique_id=random.randint(100000,999999)
-            print(unique_id, type(unique_id))
             request.data["file_id"]=unique_id
             serializer=csvFileUploadSerializer(data=request.data)
             if serializer.is_valid():
@@ -45,12 +41,10 @@ class csvFileUploadView(APIView):
                   for data in serializer.data:
                       file_id=data['file_id']
                       file=data['upload_file'].split("/")[2]
-                      print(data['upload_file'].split("/"))
                       serializer_data.append({
                           "File id":file_id,
                           "File":file
                       })
-                  print(serializer_data)
                   return Response(serializer_data)
              return Response({"Message":"Please enter file ids.","Status":status.HTTP_400_BAD_REQUEST})
         except csvFileUpload.DoesNotExist:
