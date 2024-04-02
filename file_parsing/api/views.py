@@ -12,7 +12,7 @@ from rest_framework import viewsets
 class csvFileUploadView(APIView):
     
     def post(self, request):
-            parser_classes=[MultiPartParser,FormParser]
+            # parser_classes=[MultiPartParser,FormParser]
             file=request.FILES.get('upload_file')
             if not file:
                 return Response({"Message":"Please upload a file.","Status":status.HTTP_400_BAD_REQUEST})
@@ -69,6 +69,7 @@ class retrieve_a_fileDetails(viewsets.ModelViewSet):
          data_frame=pandas.read_csv(uploaded_file)
          rows,col=data_frame.shape
          serializer=self.get_serializer(csvFileUploadModel)
+         anchor_link='<a href={}>Download link</a>'.format(serializer.data['upload_file'])
          res={
               "File Name":file_name,
               "File Size":change_b_kb_size,
@@ -78,6 +79,7 @@ class retrieve_a_fileDetails(viewsets.ModelViewSet):
               "Number of rows in the file":rows,
               "Number of columns in the file":col,
               "Download link":serializer.data['upload_file']
+            #   "Download link":anchor_link
          }
          return Response({"Data":res, "Status":status.HTTP_200_OK})
         except csvFileUpload.DoesNotExist:
