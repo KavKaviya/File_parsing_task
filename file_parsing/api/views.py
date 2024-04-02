@@ -1,4 +1,6 @@
 import mimetypes
+import os
+from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -68,8 +70,13 @@ class retrieve_a_fileDetails(viewsets.ModelViewSet):
          file_type, _ = mimetypes.guess_type(f"file.{file_extension}")
          data_frame=pandas.read_csv(uploaded_file)
          rows,col=data_frame.shape
+         print(type(data_frame.dtypes))
+         file_path=os.path.join(settings.MEDIA_ROOT,file_name)
          serializer=self.get_serializer(csvFileUploadModel)
          anchor_link='<a href={}>{}</a>'.format(serializer.data['upload_file'],file_name)
+         a=[]
+         a.append(dict(data_frame.dtypes))
+         print(dict(data_frame.dtypes))
          res={
               "File Name":file_name,
               "File Size":change_b_kb_size,
@@ -78,9 +85,11 @@ class retrieve_a_fileDetails(viewsets.ModelViewSet):
               "File created date and time":serializer.data['created_at'],
               "Number of rows in the file":rows,
               "Number of columns in the file":col,
+              "Data types of each columns":"{}".format(dict(data_frame.dtypes)),
               "Download link":serializer.data['upload_file']
             #   "Download link":anchor_link
          }
+         print(res)
          return Response({"Data":res, "Status":status.HTTP_200_OK})
         except csvFileUpload.DoesNotExist:
          return Response({"Message":"File not found, please enter valid file id.", "Status":status.HTTP_404_NOT_FOUND})
