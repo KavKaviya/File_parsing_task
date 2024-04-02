@@ -69,7 +69,7 @@ class retrieve_a_fileDetails(viewsets.ModelViewSet):
          data_frame=pandas.read_csv(uploaded_file)
          rows,col=data_frame.shape
          serializer=self.get_serializer(csvFileUploadModel)
-         anchor_link='<a href={}>Download link</a>'.format(serializer.data['upload_file'])
+         anchor_link='<a href={}>{}</a>'.format(serializer.data['upload_file'],file_name)
          res={
               "File Name":file_name,
               "File Size":change_b_kb_size,
